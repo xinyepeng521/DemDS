@@ -24,6 +24,7 @@ int main(int argc,char* argv[])
 	}
 	gen.seed(seed);
 	MDSP a;
+	a.alpha = alpha;
 	infile >> a;
 	a.DemDS();
 	cout<< filename << "," << a.X2.size() + 1 << "," << a.best_time << endl;

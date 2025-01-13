@@ -37,7 +37,7 @@ public:
 	vector<vector<int>>X_to_P;
 	vector<pair<int, int>>P_to_X;
 	vector<int>Stion;
-	int alpha = 30;
+	int alpha = 90;
 	int Beta = 1;
 	bool stop = false;
 	vector<vector<int>>vertex;
