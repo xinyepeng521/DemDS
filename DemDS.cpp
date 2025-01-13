@@ -22,8 +22,7 @@ int main(int argc,char* argv[])
 		cerr << "Open instance file failed." << endl;
 		return 1;
 	}
-	srand(seed);
-	std::mt19937 gen(seed);
+	gen.seed(seed);
 	MDSP a;
 	infile >> a;
 	a.DemDS();
