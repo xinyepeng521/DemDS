@@ -13,7 +13,7 @@
 int cutoff_time = 1000;
 int seed = 0;
 int alpha = 90;
-
+std::mt19937 gen(seed);
 using namespace std;
 long long nbIter = 90000000000;
 int current_X;
@@ -884,7 +884,7 @@ bool MDSP::Dem_kDS(long long& iter)
 		if (iter % 1000 == 0)
 		{
 			curr_time = clock();
-			if ((curr_time - begin_time) / CLOCKS_PER_SEC > 1000)
+			if ((curr_time - begin_time) / CLOCKS_PER_SEC > cutoff_time)
 			{
 				stop = true;
 				return false;
