@@ -1,8 +1,7 @@
-﻿#pragma once
+#pragma once
 #include<iostream>
 #include<vector>
 #include<algorithm>
-#include<assert.h>
 #include<ctime>
 #include<set>
 #include<stack>
@@ -10,11 +9,12 @@
 #include<random>
 #include<queue>
 #include<cstdint>
+#include <random>
+using namespace std;
 int cutoff_time = 1000;
 int seed = 0;
 int alpha = 90;
-std::mt19937 gen(seed);
-using namespace std;
+mt19937 gen(seed);
 long long nbIter = 90000000000;
 int current_X;
 class MDSP
@@ -37,7 +37,7 @@ public:
 	vector<vector<int>>X_to_P;
 	vector<pair<int, int>>P_to_X;
 	vector<int>Stion;
-	int alpha = 90;
+	int alpha = 30;
 	int Beta = 1;
 	bool stop = false;
 	vector<vector<int>>vertex;
@@ -54,7 +54,6 @@ public:
 	int x_plus;
 	int x_minus;
 	int x;
-	int current_index = 25;
 	vector<long long>age;
 	int vary_length = 25;
 	bool model = false;
@@ -309,9 +308,10 @@ public:
 			}
 		}
 	}
-	friend istream& operator >>(istream& istr, MDSP& g)//��ȡͼ
+	friend istream& operator >>(istream& istr, MDSP& g)
 	{
 		int V, value, E, value2;
+		string temp;
 		istr >> V >> E;
 		g.X_minus.assign(V, 1);
 		g.X_plus.assign(V, 0);
@@ -690,114 +690,118 @@ int MDSP::select_move(int& a, int& b, long long& iter)//(a,b)
 	}
 	int j = b1;
 	int num = 0;
-	for (auto i : HL[j])
-	{
-		if (X[i] && X2_list[i] >= ini_num)
+	if (gen() % 100)
+		for (auto i : HL[j])
 		{
-			num++;
-			int temp = 0;
-			for (auto k : X_to_P[i])
+			if (X[i] && X2_list[i] >= ini_num)
 			{
-				if (binary_search(HL[j].begin(), HL[j].end(), k))
-					temp++;
-			}
-			if (P_to_X[j].first == i)
-				temp++;
-			temp = L[j] + temp - L3[i];
-			if (!binary_search(HL[j].begin(), HL[j].end(), i))
-			{
-				if (L2[j] == 0)
-					temp++;
-				if (L2[i] == 0)
-					temp--;
-			}
-			if (sc_2 < temp)
-			{
-				sc_2 = temp;
-				a2 = i, b2 = j;
-			}
-			else if (sc_2 == temp)
-			{
-				if (age[i] < age[a2])
+				num++;
+				int temp = 0;
+				for (auto k : X_to_P[i])
 				{
+					if (binary_search(HL[j].begin(), HL[j].end(), k))
+						temp++;
+				}
+				if (P_to_X[j].first == i)
+					temp++;
+				temp = L[j] + temp - L3[i];
+				if (!binary_search(HL[j].begin(), HL[j].end(), i))
+				{
+					if (L2[j] == 0)
+						temp++;
+					/*if (L2[i] == 0)
+						temp--;*/
+				}
+				if (sc_2 < temp)
+				{
+					sc_2 = temp;
 					a2 = i, b2 = j;
 				}
-				else if (age[i] == age[a2])
+				else if (sc_2 == temp)
 				{
-					if (age[j] < age[b2])
+					if (age[i] < age[a2])
 					{
 						a2 = i, b2 = j;
-						rd_2 = 1;
 					}
-					else if (age[j] == age[b2])
+					else if (age[i] == age[a2])
 					{
-						rd_2++;
-						if (!(gen() % rd_2))
+						if (age[j] < age[b2])
 						{
 							a2 = i, b2 = j;
+							rd_2 = 1;
 						}
+						else if (age[j] == age[b2])
+						{
+							rd_2++;
+							if (!(gen() % rd_2))
+							{
+								a2 = i, b2 = j;
+							}
 
+						}
 					}
-				}
 
+				}
 			}
-		}
-		if (P_to_X[i].first != -1)//X^+\cup L^0
-		{
-			int x = P_to_X[i].first;//x
-			num++;
-			if (X2_list[x] < ini_num)
-				continue;
-			int temp = 0;
-			for (auto k : X_to_P[x])
+			if (P_to_X[i].first != -1)//X^+\cup L^0
 			{
-				if (binary_search(HL[j].begin(), HL[j].end(), k))
-					temp++;
-			}
-			if (P_to_X[j].first == x)
-				temp++;
-			temp = L[j] + temp - L3[x];
-			if (!binary_search(HL[j].begin(), HL[j].end(), x))
-			{
-				if (L2[j] == 0)
-					temp++;
-				if (L2[x] == 0)
-					temp--;
-			}
-			if (sc_2 < temp)
-			{
-				sc_2 = temp;
-				a2 = x, b2 = j;
-			}
-			else if (sc_2 == temp)
-			{
-				if (age[x] < age[a2])
+				int x = P_to_X[i].first;//x
+				num++;
+				if (X2_list[x] < ini_num)
+					continue;
+				int temp = 0;
+				for (auto k : X_to_P[x])
 				{
+					if (binary_search(HL[j].begin(), HL[j].end(), k))
+						temp++;
+				}
+				if (P_to_X[j].first == x)
+					temp++;
+				temp = L[j] + temp - L3[x];
+				if (!binary_search(HL[j].begin(), HL[j].end(), x))
+				{
+					if (L2[j] == 0)
+						temp++;
+					/*if (L2[x] == 0)
+						temp--;*/
+				}
+				if (sc_2 < temp)
+				{
+					sc_2 = temp;
 					a2 = x, b2 = j;
 				}
-				else if (age[x] == age[a2])
+				else if (sc_2 == temp)
 				{
-					if (age[j] < age[b2])
+					if (age[x] < age[a2])
 					{
 						a2 = x, b2 = j;
-						rd_2 = 1;
 					}
-					else if (age[j] == age[b2])
+					else if (age[x] == age[a2])
 					{
-						rd_2++;
-						if (!(gen() % rd_2))
+						if (age[j] < age[b2])
 						{
 							a2 = x, b2 = j;
+							rd_2 = 1;
 						}
+						else if (age[j] == age[b2])
+						{
+							rd_2++;
+							if (!(gen() % rd_2))
+							{
+								a2 = x, b2 = j;
+							}
 
+						}
 					}
-				}
 
+				}
 			}
 		}
-	}
 	num = max(Beta, num);
-	for (int i = current_index; i < min(current_index + num, int(X2.size() - 1)); i++)
+	vary_length = num;
+
+	/*vary_length = max(Beta, num);*/
+	for (int i = ini_num; i <= min(ini_num + num, int(X2.size() - 1)); i++)
 	{
 		int temp = 0;
 		int x = X2[i];
@@ -813,8 +817,8 @@ int MDSP::select_move(int& a, int& b, long long& iter)//(a,b)
 		{
 			if (L2[j] == 0)
 				temp++;
-			if (L2[x] == 0)
-				temp--;
+			/*if (L2[x] == 0)
+				temp--;*/
 		}
 		if (temp > s)
 		{
@@ -872,8 +876,6 @@ void MDSP::apply_move(int& a, int& b, long long  iter)
 }
 bool MDSP::Dem_kDS(long long& iter)
 {
-	if (current_index + vary_length >= upper)
-		current_index = ini_num;
 	if (x_minus == 0)
 	{
 		return true;
@@ -892,42 +894,33 @@ bool MDSP::Dem_kDS(long long& iter)
 		}
 		// if ((curr_time - log2_time) / CLOCKS_PER_SEC > 1)
 		// {
-		// 	cout << "#" << iter << "  #" << current_X  << "  #" << x_minus << "  " /*<< iter / (num_it + 1) * / */ << "   " << X2.size() << "  " << current_X-X2.size() << endl;
+		// 	cout << "#" << iter << "  #" << current_X << "  #" << x_minus << "  " /*<< iter / (num_it + 1) * / */ << "   " << X2.size() << "  " << current_X - X2.size() << endl;
 		// 	log2_time = curr_time;
 		// }
-
 		c = select_move(a, b, iter);
 		if (a != -1 && b != -1)
 		{
 			d = x_minus;
 			apply_move(a, b, iter);
-			swap(X2[current_index], X2[X2_list[b]]);
-			swap(X2_list[X2[current_index]], X2_list[X2[X2_list[b]]]);
-			current_index++;
+			swap(X2[ini_num], X2[X2_list[b]]);
+			swap(X2_list[X2[ini_num]], X2_list[X2[X2_list[b]]]);
 		}
-
-		if (current_index + vary_length >= upper)
-		{
-			current_index = ini_num;
-		}
+		
 		if (x_minus == 0)
 		{
 			best_time = (curr_time - begin_time) / CLOCKS_PER_SEC;
-			if ((curr_time - log_time) / CLOCKS_PER_SEC > 10) {
+			if ((curr_time - log_time) / CLOCKS_PER_SEC > 2) {
 				improve(iter);
 				log_time = curr_time;
-				bbb++;
 			}
 			return true;
 		}
-
-		for (int i = current_index; i < current_index + vary_length; i++)
+		for (int i = ini_num; i < ini_num + vary_length; i++)
 		{
 			int rd = gen() % (X2.size() - ini_num) + ini_num;
 			swap(X2[i], X2[rd]);
 			swap(X2_list[X2[i]], X2_list[X2[rd]]);
 		}
-
 	}
 	return false;
 }
@@ -939,13 +932,12 @@ void MDSP::DemDS()
 	calc_score();
 	improve(0);
 	long long iter = 0;
-	current_index = ini_num + 1;
 	begin_time = clock();
+	vector<int>best_solution;
 	while (iter < nbIter)
 	{
-		int num = current_index;//remove
+		int num = ini_num;//remove
 		remove_vertex(X2[num], iter);
-		upper = min(ini_num + 1000, int(X2.size() - 1));
 		current_X = X2.size();
 		Dem_kDS(iter);
 		if (stop)
